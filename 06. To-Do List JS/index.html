@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist To-Do App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="todo-container">
+        <h2>My Todo List</h2>
+
+        <div class="todo-input-area">
+            <input type="text" id="todo-input" placeholder="Add a new task..." autocomplete="off">
+            <button id="add-btn">Add</button>
+        </div>
+
+        <div class="todo-filters">
+            <span class="filter-btn active" data-filter="all">All</span>
+            <span class="filter-btn" data-filter="pending">Pending</span>
+            <span class="filter-btn" data-filter="completed">Completed</span>
+        </div>
+
+        <ul id="todo-list">
+            <li class="todo-item">
+                <span class="task-text">Buy some fresh soil for bonsai</span>
+                <button class="delete-btn">&times;</button>
+            </li>
+
+            <li class="todo-item completed">
+                <span class="task-text">Water the plants</span>
+                <button class="delete-btn">&times;</button>
+            </li>
+        </ul>
+    </div>
+
+</body>
+
+</html>
