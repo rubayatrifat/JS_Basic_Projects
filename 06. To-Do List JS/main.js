@@ -9,20 +9,22 @@ const filterBtn = document.querySelectorAll(".filter-btn")
 
 // Closing the err
 function closeErr() {
-    setTimeout(() => {
+    errMsg.classList.add("show")
+    if (errTimer) clearTimeout(errTimer);
+    let errTimer = setTimeout(() => {
         errMsg.classList.remove("show")
     }, 5000)
-    errClose.addEventListener("click", () => {
-        errMsg.classList.remove("show")
-    })
 }
+
+errClose.addEventListener("click", () => {
+    errMsg.classList.remove("show")
+})
 
 // Checking if the input is valid
 function checkingInput() {
-    if (toDoInput.value === "") {
-        errMsg.classList.add("show")
+    if (toDoInput.value.trim() === "") {
         closeErr()
-        return
+        return null
     } else {
         errMsg.classList.remove("show")
         return toDoInput.value
@@ -43,9 +45,10 @@ function addToDo(toDoTxt) {
 // Submiting todo
 toDoAddBtn.addEventListener("click", (evt) => {
     evt.preventDefault()
-
-    if (checkingInput()) {
-        addToDo(checkingInput())
+    const inputValue = checkingInput()
+    if (inputValue) {
+        addToDo(inputValue)
+        toDoInput.value = ""
     }
 })
 
@@ -64,35 +67,34 @@ toDoList.addEventListener("click", (evt) => {
 
 // ================ Adding Tabs funcitonalities ===============
 
+filterBtn.forEach(item => {
+    item.addEventListener("click", () => {
+        const currentActive = document.querySelector(".filter-btn.active")
+        if (currentActive) {
+            currentActive.classList.remove("active")
+        }
+        item.classList.add("active")
 
-// function showAll(item) {
-//     item.classList.remove("hide")
-// }
-// function showPending(item) {
-//     if (item.classList.contains("completed")) {
-//         item.classList.add("hide")
-//     }
-// }
-// function showCompleted(item) {
-//     if (item.classList.contains("pending")) {
-//         item.classList.add("hide")
-//     }
-// }
 
-// filterBtn.forEach(item => {
-//     item.addEventListener("click", () => {
-//         const currentActive = document.querySelector(".filter-btn.active")
-//         if (currentActive) {
-//             currentActive.classList.remove("active")
-//         }
-//         item.classList.add("active")
+        const currentFilter = item.dataset.filter
 
-//         if (item.dataset.filter === "all") {
-//             showAll()
-//         } else if (item.dataset.filter === "pending") {
-//             showPending()
-//         } else if (item.dataset.filter === "completed") {
-//             showCompleted()
-//         }
-//     })
-// })
+        const toDoItems = document.querySelectorAll(".todo-item")
+        toDoItems.forEach(singleItem => {
+            if(currentFilter === "all") {
+                singleItem.classList.remove("hide")
+            } else if (currentFilter === "pending") {
+                if(singleItem.classList.contains("completed")) {
+                    singleItem.classList.add("hide")
+                } else {
+                    singleItem.classList.remove("hide")
+                }
+            } else if (currentFilter === "completed") {
+                if (!singleItem.classList.contains("completed")) {
+                    singleItem.classList.add("hide")
+                } else {
+                    singleItem.classList.remove("hide")
+                }
+            }
+        })
+    })
+})
