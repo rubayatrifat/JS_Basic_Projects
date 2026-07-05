@@ -12,28 +12,30 @@ const userList = document.querySelector("#userList")
 const searchInput = document.querySelector("#searchInput")
 let users = userData.users
 
-function loadData() {
-    for (let i = 0; i < users.length; i++) {
+function loadData(dataArr) {
+    userList.innerHTML = ""
+    dataArr.forEach(item => {
         let cardUi = `<li class="user-item">
-                        <span class="user-name">${users[i].name}</span>
-                        <span class="user-role">${users[i].role}</span>
+                        <span class="user-name">${item.name}</span>
+                        <span class="user-role">${item.role}</span>
                      </li>`
 
-        userList.insertAdjacentHTML("afterbegin", cardUi)
-    }
+        userList.insertAdjacentHTML("beforeend", cardUi)
+    }) 
 }
 
-loadData()
+loadData(users)
 
-function filterData() {
-    users.filter((item) => {
-        item
+function filterData(inputedValue) {
+    let searchedItms = users.filter(item => {
+        return item.name.toLowerCase().includes(inputedValue.toLowerCase()) || item.role.toLowerCase().includes(inputedValue.toLowerCase())
     })
+
+    loadData(searchedItms)
 }
 
 searchInput.addEventListener("input", evt => {
-    // if (evt.target.value ===)
-    filterData()
+    filterData(evt.target.value)
 
 })
 
