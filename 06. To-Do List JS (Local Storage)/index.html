@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist To-Do App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="todo-container">
+        <h2>My Todo List</h2>
+
+        <div id="error-msg" class="error-container">
+            <span class="error-text">Please fill out the input field!!</span>
+            <button class="error-close-btn">&times;</button>
+        </div>
+
+        <div class="todo-input-area">
+            <input type="text" id="todo-input" placeholder="Add a new task..." autocomplete="off">
+            <button id="add-btn">Add</button>
+        </div>
+
+        <div class="todo-filters">
+            <span class="filter-btn active" data-filter="all">All</span>
+            <span class="filter-btn" data-filter="pending">Pending</span>
+            <span class="filter-btn" data-filter="completed">Completed</span>
+        </div>
+
+        <ul id="todo-list">
+        </ul>
+    </div>
+
+</body>
+    <script src="main.js"></script>
+</html>

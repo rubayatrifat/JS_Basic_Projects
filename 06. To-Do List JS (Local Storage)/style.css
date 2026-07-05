@@ -1,0 +1,233 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0f172a;
+    /* Deep Dark Slate */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Container Card */
+.todo-container {
+    background: #1e293b;
+    /* Charcoal Dark */
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
+    border: 1px solid #334155;
+}
+
+h2 {
+    color: #f8fafc;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* Input Area */
+.todo-input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#todo-input {
+    flex: 1;
+    padding: 12px 16px;
+    background-color: #0f172a;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #f8fafc;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#todo-input::placeholder {
+    color: #64748b;
+}
+
+#todo-input:focus {
+    border-color: #4ade80;
+    /* Neon Green Tint */
+}
+
+#add-btn {
+    background-color: #22c55e;
+    color: #ffffff;
+    border: none;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#add-btn:hover {
+    background-color: #16a34a;
+}
+
+/* Filters */
+.todo-filters {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #94a3b8;
+}
+
+.filter-btn {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+    color: #4ade80;
+    font-weight: 600;
+}
+
+/* Todo List Items */
+#todo-list {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar for list */
+#todo-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#todo-list::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 4px;
+}
+
+.todo-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #0f172a;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid #22c55e;
+    border-top: 1px solid #334155;
+    border-right: 1px solid #334155;
+    border-bottom: 1px solid #334155;
+    transition: all 0.2s ease;
+}
+
+.todo-item:hover {
+    transform: translateY(-1px);
+    background: #1e293b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.task-text {
+    color: #e2e8f0;
+    font-size: 15px;
+    cursor: pointer;
+    flex: 1;
+}
+
+/* Completed Task State (JS trigger) */
+.todo-item.completed {
+    border-left-color: #475569;
+    opacity: 0.5;
+}
+
+.todo-item.completed .task-text {
+    text-decoration: line-through;
+    color: #64748b;
+}
+
+.todo-item.hide {
+    display: none;
+}
+
+/* Delete Button */
+.delete-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    /* Alert Red */
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+    transition: transform 0.1s;
+}
+
+.delete-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Err Message */
+.error-container {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgba(239, 68, 68, 0.15);
+    border: 1px solid #ef4444;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+.error-container.show {
+    animation: shake 0.4s ease-in-out;
+    display: flex;
+}
+
+.error-text {
+    color: #fca5a5;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error-close-btn {
+    background: none;
+    border: none;
+    color: #fca5a5;
+    font-size: 18px;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.error-close-btn:hover {
+    color: #ef4444;
+}
+
+/* Shake Animation Keyframes */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-6px);
+    }
+
+    50% {
+        transform: translateX(6px);
+    }
+
+    75% {
+        transform: translateX(-4px);
+    }
+}
