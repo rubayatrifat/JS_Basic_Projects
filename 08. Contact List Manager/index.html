@@ -72,14 +72,21 @@
         </div>
 
         <div class="flex flex-col gap-3.5 pl-2">
-            <span class="w-4 h-4 rounded-full bg-black border border-gray-600 cursor-pointer hover:scale-110 transition"
-                title="All/Default"></span>
-            <span class="w-4 h-4 rounded-full bg-[#a855f7] cursor-pointer hover:scale-110 transition"
-                title="Urgent"></span>
-            <span class="w-4 h-4 rounded-full bg-[#f97316] cursor-pointer hover:scale-110 transition"
-                title="Important"></span>
-            <span class="w-4 h-4 rounded-full bg-[#10b981] cursor-pointer hover:scale-110 transition"
-                title="No Rush"></span>
+            <span
+                class="active-filter category-btn w-4 h-4 rounded-full bg-gray-500 border-2 border-[#121212] outline outline-1 outline-[#ffffff73] cursor-pointer scale-110 hover:scale-110 transition"
+                title="All/Default" data-filter="all"></span>
+
+            <span
+                class="category-btn w-4 h-4 rounded-full bg-[#a855f7] border-2 border-transparent outline outline-1 outline-transparent cursor-pointer hover:scale-110 transition"
+                title="Urgent" data-filter="urgent"></span>
+
+            <span
+                class="category-btn w-4 h-4 rounded-full bg-[#f97316] border-2 border-transparent outline outline-1 outline-transparent cursor-pointer hover:scale-110 transition"
+                title="Important" data-filter="important"></span>
+
+            <span
+                class="category-btn w-4 h-4 rounded-full bg-[#10b981] border-2 border-transparent outline outline-1 outline-transparent cursor-pointer hover:scale-110 transition"
+                title="No Rush" data-filter="norush"></span>
         </div>
 
     </div>

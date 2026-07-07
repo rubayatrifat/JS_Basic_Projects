@@ -24,43 +24,96 @@ const noteUI = document.querySelector(".note-ui")
 const nextCardBtn = document.querySelector(".next-card")
 const prevCardBtn = document.querySelector(".prev-card")
 
-// Current item index
-let currentCardIndex
+// Category Buttons
+const categoryFilterBtns = document.querySelectorAll(".category-btn")
 
 // Initialing Local Data Sotorage
 if (!localStorage.getItem("contactList")) {
     localStorage.setItem("contactList", "[]")
 }
 
+// Acitve Category
+let activeCategory
+
+// Current item index
+let currentCardIndex
+
+// Filtered Contact list 
+let contactListFiltered
+
 // Loading Data to UI
 function loadDataUI(itemNumber) {
-    let contactList = JSON.parse(localStorage.getItem("contactList"))
+    // Checking active category
+    activeCategory = document.querySelector(".active-filter").dataset.filter
 
-    if (contactList.length > 0) {
-        let theItem = contactList[itemNumber]
-        userImageUI.src = theItem.imgUrl
-        userNameUI.textContent = theItem.name
-        addressUI.textContent = theItem.address
-        noteUI.textContent = theItem.note
-        UiCard.classList.remove("urgent-card", "Family-card", "important-card", "norush-card")
-        UiCard.classList.add(`${theItem.category}-card`)
-        currentCardIndex = itemNumber
+    let contactList = JSON.parse(localStorage.getItem("contactList"))
+    
+    if (activeCategory === "all") {
+        if (contactList.length > 0) {
+            let contactListItem = contactList[itemNumber]
+            userImageUI.src = contactListItem.imgUrl
+            userNameUI.textContent = contactListItem.name
+            addressUI.textContent = contactListItem.address
+            noteUI.textContent = contactListItem.note
+            UiCard.classList.remove("urgent-card", "important-card", "norush-card")
+            UiCard.classList.add(`${contactListItem.category}-card`)
+            currentCardIndex = itemNumber
+        }
+    } else {
+        if (contactListFiltered.length > 0) {
+            let filteredItem = contactListFiltered[itemNumber]
+            userImageUI.src = filteredItem.imgUrl
+            userNameUI.textContent = filteredItem.name
+            addressUI.textContent = filteredItem.address
+            noteUI.textContent = filteredItem.note
+            UiCard.classList.remove("urgent-card", "important-card", "norush-card")
+            UiCard.classList.add(`${filteredItem.category}-card`)
+            currentCardIndex = itemNumber
+        } else {
+            userImageUI.src = "https://zafarplastic.com/wp-content/uploads/2024/02/zpceo.jpg"
+            userNameUI.textContent = "No Data"
+            addressUI.textContent = "No Data"
+            noteUI.textContent = "No Data"
+            UiCard.classList.remove("urgent-card", "important-card", "norush-card")
+        }
     }
 }
 loadDataUI(0)
 
 // Checking Button Disability
 function checkBtnDisbl() {
-    if (JSON.parse(localStorage.getItem("contactList")).length > 1) {
-        if (currentCardIndex === 0) {
-            prevCardBtn.disabled = true
-            nextCardBtn.disabled = false
-        } else if (currentCardIndex === JSON.parse(localStorage.getItem("contactList")).length - 1) {
-            nextCardBtn.disabled = true
-            prevCardBtn.disabled = false
+    activeCategory = document.querySelector(".active-filter").dataset.filter
+    if (activeCategory === "all") {
+        if (JSON.parse(localStorage.getItem("contactList")).length > 1) {
+            if (currentCardIndex === 0) {
+                prevCardBtn.disabled = true
+                nextCardBtn.disabled = false
+            } else if (currentCardIndex === JSON.parse(localStorage.getItem("contactList")).length - 1) {
+                nextCardBtn.disabled = true
+                prevCardBtn.disabled = false
+            } else {
+                prevCardBtn.disabled = false
+                nextCardBtn.disabled = false
+            }
         } else {
-            prevCardBtn.disabled = false
-            nextCardBtn.disabled = false
+            prevCardBtn.disabled = true
+            nextCardBtn.disabled = true
+        }
+    } else {
+        if (contactListFiltered.length > 1) {
+            if (currentCardIndex === 0) {
+                prevCardBtn.disabled = true
+                nextCardBtn.disabled = false
+            } else if (currentCardIndex === contactListFiltered.length - 1) {
+                nextCardBtn.disabled = true
+                prevCardBtn.disabled = false
+            } else {
+                prevCardBtn.disabled = false
+                nextCardBtn.disabled = false
+            }
+        } else {
+            prevCardBtn.disabled = true
+            nextCardBtn.disabled = true
         }
     }
 }
@@ -207,3 +260,38 @@ prevCardBtn.addEventListener("click", evt => {
     // Checking button disability
     checkBtnDisbl()
 })
+
+
+// Filtering Items
+function filterItems(filterCate) {
+    let latestItems = JSON.parse(localStorage.getItem("contactList"))
+    contactListFiltered = latestItems.filter(item => {
+        return item.category === filterCate
+    })
+}
+
+// Categorywise Navigaiton
+categoryFilterBtns.forEach(item => {
+    item.addEventListener("click", evt => {
+        categoryFilterBtns.forEach(btn => {
+            btn.classList.remove("border-2", "border-[#121212]", "outline", "outline-1", "outline-[#ffffff73]", "scale-110");
+            btn.classList.add("border-transparent", "outline-transparent");
+            btn.classList.remove("active-filter")
+        });
+
+        item.classList.remove("border-transparent", "outline-transparent");
+        item.classList.add("border-2", "border-[#121212]", "outline", "outline-1", "outline-[#ffffff73]", "scale-110");
+        item.classList.add("active-filter")
+
+        // Filtering Items
+        filterItems(item.dataset.filter)
+
+        // Loading Filtered UI
+        loadDataUI(0)
+
+        // Checking Button disablity
+        checkBtnDisbl()
+    });
+
+    
+});
