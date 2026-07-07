@@ -100,7 +100,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Full Name</label>
-                    <input type="text" id="nameInput" placeholder="Enter full name"
+                    <input data-maxchar="35" type="text" id="nameInput" placeholder="Enter full name"
                         class="user-name w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition">
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
                         <span id="nameCounter" class="font-medium">0</span> / 35
@@ -109,7 +109,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Home Town</label>
-                    <input type="text" id="homeInput" placeholder="Enter home town"
+                    <input data-maxchar="25" type="text" id="homeInput" placeholder="Enter home town"
                         class="user-address w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition">
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
                         <span id="homeCounter" class="font-medium">0</span> / 25
@@ -118,7 +118,7 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Appointment Note</label>
-                    <textarea id="noteInput" rows="3" placeholder="Write your appointment note here (Max 150 characters)..."
+                    <textarea data-maxchar="150" id="noteInput" rows="3" placeholder="Write your appointment note here (Max 150 characters)..."
                         class="w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition resize-none scrollbar-thin scrollbar-thumb-gray-700"></textarea>
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
                         <span id="noteCounter" class="font-medium">0</span> / 150
