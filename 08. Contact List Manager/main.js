@@ -11,11 +11,62 @@ const noteInput = document.querySelector("#noteInput")
 const categoryInputs = document.querySelectorAll(".category-rad")
 const createNoteBtn = document.querySelector(".create-note")
 const errMsg = document.querySelector("#errorMsg")
-const imgUrlRegex = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif|webp|svg|avif)(?:\?.*)?)$/i;
+const imgUrlRegex = /^(https?:\/\/)[^\s$.?#].[^\s]*$/i;
+
+// Accesing Card UI components
+const UiCard = document.querySelector(".single-card")
+const userImageUI = document.querySelector(".user-image-ui")
+const userNameUI = document.querySelector(".user-name-ui")
+const addressUI = document.querySelector(".home-town")
+const noteUI = document.querySelector(".note-ui")
+
+// Card Navigation Buttons
+const nextCardBtn = document.querySelector(".next-card")
+const prevCardBtn = document.querySelector(".prev-card")
+
+// Current item index
+let currentCardIndex
+
 // Initialing Local Data Sotorage
 if (!localStorage.getItem("contactList")) {
     localStorage.setItem("contactList", "[]")
 }
+
+// Loading Data to UI
+function loadDataUI(itemNumber) {
+    let contactList = JSON.parse(localStorage.getItem("contactList"))
+
+    if (contactList.length > 0) {
+        let theItem = contactList[itemNumber]
+        userImageUI.src = theItem.imgUrl
+        userNameUI.textContent = theItem.name
+        addressUI.textContent = theItem.address
+        noteUI.textContent = theItem.note
+        UiCard.classList.remove("urgent-card", "Family-card", "important-card", "norush-card")
+        UiCard.classList.add(`${theItem.category}-card`)
+        currentCardIndex = itemNumber
+    }
+}
+loadDataUI(0)
+
+// Checking Button Disability
+function checkBtnDisbl() {
+    if (JSON.parse(localStorage.getItem("contactList")).length > 1) {
+        if (currentCardIndex === 0) {
+            prevCardBtn.disabled = true
+            nextCardBtn.disabled = false
+        } else if (currentCardIndex === JSON.parse(localStorage.getItem("contactList")).length - 1) {
+            nextCardBtn.disabled = true
+            prevCardBtn.disabled = false
+        } else {
+            prevCardBtn.disabled = false
+            nextCardBtn.disabled = false
+        }
+    }
+}
+
+checkBtnDisbl()
+
 
 // Show Modal
 openModalBtn.addEventListener('click', () => {
@@ -46,8 +97,6 @@ function showErr(messege) {
     }, 3000)
 }
 
-// ========== Checking inputed charecter number
-
 // Live changing charecter count
 formModal.addEventListener("input", evt => {
     let inputedCharLen = evt.target.value.length
@@ -61,7 +110,7 @@ formModal.addEventListener("input", evt => {
     }
 })
 
-
+// Limited Charecter validation
 function checkCharNum(targetEle, maxChar, name) {
     if (targetEle.value.length > maxChar) {
         showErr(`You can only input ${maxChar} charecter in ${name}!!`)
@@ -69,7 +118,6 @@ function checkCharNum(targetEle, maxChar, name) {
     }
     return true
 }
-
 
 // Checking valid input (function)
 function checkInputs() {
@@ -90,26 +138,7 @@ function checkInputs() {
         && checkCharNum(noteInput, noteInput.dataset.maxchar, "Note Input Field")
 }
 
-// Reseting the form
-function resetForm() {
-    // Reseting input
-    imgInput.value = ""
-    userNameInput.value = ""
-    userAddressInput.value = ""
-    noteInput.value = ""
-    // Reseting input charecter counter
-    nameCounter.textContent = "0"
-    homeCounter.textContent = "0"
-    noteCounter.textContent = "0"
-    // Reseting input counter color
-    nameCounter.style.color = "rgb(107 114 128)"
-    homeCounter.style.color = "rgb(107 114 128)"
-    noteCounter.style.color = "rgb(107 114 128)"
-    // Closing the modal
-    formModal.classList.add('hidden');
-    formModal.classList.remove('flex');
-}
-
+// Saving Data to local storage
 function saveData() {
     // Creating a object with all info
     let contactCategory
@@ -132,14 +161,49 @@ function saveData() {
     localStorage.setItem("contactList", JSON.stringify(localStorageArr))
 
 }
-// Loading Data to UI
 
+// Reseting the form
+function resetForm() {
+    // Reseting input
+    imgInput.value = ""
+    userNameInput.value = ""
+    userAddressInput.value = ""
+    noteInput.value = ""
+    // Reseting input charecter counter
+    nameCounter.textContent = "0"
+    homeCounter.textContent = "0"
+    noteCounter.textContent = "0"
+    // Reseting input counter color
+    nameCounter.style.color = "rgb(107 114 128)"
+    homeCounter.style.color = "rgb(107 114 128)"
+    noteCounter.style.color = "rgb(107 114 128)"
+    // Closing the modal
+    formModal.classList.add('hidden');
+    formModal.classList.remove('flex');
+}
 
 // Adding a new note card
 createNoteBtn.addEventListener("click", evt => {
     if (checkInputs() === false) return;
     saveData()
     resetForm()
-    loadDataUI()
+    loadDataUI(JSON.parse(localStorage.getItem("contactList")).length - 1)
+    checkBtnDisbl()
 })
 
+// Card Navigation
+nextCardBtn.addEventListener("click", evt => {
+    // Loading next card data
+    loadDataUI(++currentCardIndex)
+
+    // Checking button disability
+    checkBtnDisbl()
+})
+
+prevCardBtn.addEventListener("click", evt => {
+    // Loading next card data
+    loadDataUI(--currentCardIndex)
+
+    // Checking button disability
+    checkBtnDisbl()
+})
