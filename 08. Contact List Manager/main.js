@@ -39,7 +39,7 @@ let activeCategory
 let currentCardIndex
 
 // Filtered Contact list 
-let contactListFiltered
+let contactListFiltered = []
 
 // Loading Data to UI
 function loadDataUI(itemNumber) {
@@ -240,8 +240,18 @@ createNoteBtn.addEventListener("click", evt => {
     if (checkInputs() === false) return;
     saveData()
     resetForm()
-    loadDataUI(JSON.parse(localStorage.getItem("contactList")).length - 1)
-    checkBtnDisbl()
+    categoryFilterBtns.forEach(btn => {
+        btn.classList.remove("border-2", "border-[#121212]", "outline", "outline-1", "outline-[#ffffff73]", "scale-110", "active-filter");
+        btn.classList.add("border-transparent", "outline-transparent");
+    });
+
+    const allFilterBtn = document.querySelector('[data-filter="all"]');
+    if (allFilterBtn) {
+        allFilterBtn.classList.remove("border-transparent", "outline-transparent");
+        allFilterBtn.classList.add("border-2", "border-[#121212]", "outline", "outline-1", "outline-[#ffffff73]", "scale-110", "active-filter");
+    }
+    loadDataUI(JSON.parse(localStorage.getItem("contactList")).length - 1);
+    checkBtnDisbl();
 })
 
 // Card Navigation
