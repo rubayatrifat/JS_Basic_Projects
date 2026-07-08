@@ -20,6 +20,12 @@ const userNameUI = document.querySelector(".user-name-ui")
 const addressUI = document.querySelector(".home-town")
 const noteUI = document.querySelector(".note-ui")
 
+// Card Delete and Edit 
+const cardDeleteBtn = document.querySelector("#deleteCardBtn")
+const cardEditBtn = document.querySelector("#editCardBtn")
+const cardDeleteCnfrm = document.querySelector("#deleteConfirmModal")
+const cardEditModal = document.querySelector("#editFormModal")
+
 // Card Navigation Buttons
 const nextCardBtn = document.querySelector(".next-card")
 const prevCardBtn = document.querySelector(".prev-card")
@@ -47,7 +53,7 @@ function loadDataUI(itemNumber) {
     activeCategory = document.querySelector(".active-filter").dataset.filter
 
     let contactList = JSON.parse(localStorage.getItem("contactList"))
-    
+
     if (activeCategory === "all") {
         if (contactList.length > 0) {
             let contactListItem = contactList[itemNumber]
@@ -79,6 +85,35 @@ function loadDataUI(itemNumber) {
     }
 }
 loadDataUI(0)
+
+// Removing data from UI
+function removeDataUi(itemIndex) {
+    activeCategory = document.querySelector(".active-filter").dataset.filter;
+
+    let contactList = JSON.parse(localStorage.getItem("contactList")) || [];
+
+    if (activeCategory === "all") {
+        contactList.splice(itemIndex, 1);
+
+        localStorage.setItem("contactList", JSON.stringify(contactList));
+    } else {
+        let targetItem = contactListFiltered[itemIndex];
+
+        contactListFiltered.splice(itemIndex, 1);
+
+        let mainIndex = contactList.findIndex(item =>
+            item.name === targetItem.name &&
+            item.imgUrl === targetItem.imgUrl &&
+            item.note === targetItem.note
+        );
+
+        if (mainIndex !== -1) {
+            contactList.splice(mainIndex, 1);
+        }
+
+        localStorage.setItem("contactList", JSON.stringify(contactList));
+    }
+}
 
 // Checking Button Disability
 function checkBtnDisbl() {
@@ -303,5 +338,27 @@ categoryFilterBtns.forEach(item => {
         checkBtnDisbl()
     });
 
-    
+
 });
+
+// Delete Button Functionality
+cardDeleteBtn.addEventListener("click", evt => {
+    // Showing confirmation modal
+    cardDeleteCnfrm.classList.remove("hidden")
+    cardDeleteCnfrm.classList.add("flex")
+})
+
+cardDeleteCnfrm.addEventListener("click", evt => {
+    // Cancelling or confirming the process
+    if (evt.target.id === "confirmDeleteBtn") {
+        cardDeleteCnfrm.classList.remove("flex")
+        cardDeleteCnfrm.classList.add("hidden")
+        removeDataUi(currentCardIndex)
+        loadDataUI(0)
+        checkBtnDisbl()
+    } else if (evt.target.id === "cancelDeleteBtn") {
+        cardDeleteCnfrm.classList.remove("flex")
+        cardDeleteCnfrm.classList.add("hidden")
+    }
+})
+
