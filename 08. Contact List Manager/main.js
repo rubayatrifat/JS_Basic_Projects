@@ -31,6 +31,8 @@ const imgEditInput = document.querySelector("#editImgInput")
 const nameEditInput = document.querySelector("#editNameInput")
 const addressEditInput = document.querySelector("#editAddressInput")
 const noteEditInput = document.querySelector("#editNoteInput")
+const editCategories = document.querySelectorAll(".edit-category-rad")
+const editErrMsg = document.querySelector("#editErrorMsg")
 
 // Card Navigation Buttons
 const nextCardBtn = document.querySelector(".next-card")
@@ -72,19 +74,6 @@ function loadDataUI(itemNumber) {
             currentCardIndex = itemNumber
             cardEditBtn.disabled = false
             cardDeleteBtn.disabled = false
-        }
-    } else {
-        if (contactListFiltered.length > 0) {
-            let filteredItem = contactListFiltered[itemNumber]
-            userImageUI.src = filteredItem.imgUrl
-            userNameUI.textContent = filteredItem.name
-            addressUI.textContent = filteredItem.address
-            noteUI.textContent = filteredItem.note
-            UiCard.classList.remove("urgent-card", "important-card", "norush-card")
-            UiCard.classList.add(`${filteredItem.category}-card`)
-            currentCardIndex = itemNumber
-            cardEditBtn.disabled = false
-            cardDeleteBtn.disabled = false
         } else {
             userImageUI.src = "https://zafarplastic.com/wp-content/uploads/2024/02/zpceo.jpg"
             userNameUI.textContent = "No Data"
@@ -94,6 +83,35 @@ function loadDataUI(itemNumber) {
             cardEditBtn.disabled = true
             cardDeleteBtn.disabled = true
         }
+    } else {
+        if (contactListFiltered.length > 0) {
+            if (itemNumber >= contactListFiltered.length) {
+                itemNumber = contactListFiltered.length - 1;
+            }
+            if (itemNumber < 0) itemNumber = 0;
+
+            let filteredItem = contactListFiltered[itemNumber];
+
+            if (filteredItem) {
+                userImageUI.src = filteredItem.imgUrl;
+                userNameUI.textContent = filteredItem.name;
+                addressUI.textContent = filteredItem.address;
+                noteUI.textContent = filteredItem.note;
+                UiCard.classList.remove("urgent-card", "important-card", "norush-card");
+                UiCard.classList.add(`${filteredItem.category}-card`);
+                currentCardIndex = itemNumber;
+                cardEditBtn.disabled = false;
+                cardDeleteBtn.disabled = false;
+            }
+        } else {
+            userImageUI.src = "https://zafarplastic.com/wp-content/uploads/2024/02/zpceo.jpg";
+            userNameUI.textContent = "No Data";
+            addressUI.textContent = "No Data";
+            noteUI.textContent = "No Data";
+            UiCard.classList.remove("urgent-card", "important-card", "norush-card");
+            cardEditBtn.disabled = true;
+            cardDeleteBtn.disabled = true;
+        }
     }
 }
 loadDataUI(0)
@@ -102,7 +120,7 @@ loadDataUI(0)
 function removeDataUi(itemIndex) {
     activeCategory = document.querySelector(".active-filter").dataset.filter;
 
-    let contactList = JSON.parse(localStorage.getItem("contactList")) || [];
+    let contactList = JSON.parse(localStorage.getItem("contactList"));
 
     if (activeCategory === "all") {
         contactList.splice(itemIndex, 1);
@@ -197,53 +215,58 @@ window.addEventListener('click', (e) => {
 });
 
 // Err showing function
-function showErr(messege) {
-    errMsg.classList.remove("hidden")
-    errMsg.textContent = messege
+function showErr(messege, errContainer) {
+    errContainer.classList.remove("hidden")
+    errContainer.textContent = messege
     setTimeout(() => {
-        errMsg.classList.add("hidden")
+        errContainer.classList.add("hidden")
     }, 3000)
 }
 
 // Live changing charecter count
-formModal.addEventListener("input", evt => {
-    let inputedCharLen = evt.target.value.length
-    let charCountElm = document.getElementById(evt.target.id.replace("Input", "Counter"))
-    if (!charCountElm) return
-    charCountElm.textContent = inputedCharLen
-    if (inputedCharLen > evt.target.dataset.maxchar) {
-        charCountElm.style.color = "rgb(239 68 68)"
-    } else {
-        charCountElm.style.color = "rgb(107 114 128)"
-    }
-})
+function liveCharCount(inputsModal) {
+    inputsModal.addEventListener("input", evt => {
+        let inputedCharLen = evt.target.value.length
+        let charCountElm = document.getElementById(evt.target.id.replace("Input", "Counter"))
+        if (!charCountElm) return
+        charCountElm.textContent = inputedCharLen
+        if (inputedCharLen > evt.target.dataset.maxchar) {
+            charCountElm.style.color = "rgb(239 68 68)"
+        } else {
+            charCountElm.style.color = "rgb(107 114 128)"
+        }
+    })
+}
+
+liveCharCount(formModal)
+liveCharCount(cardEditModal)
 
 // Limited Charecter validation
-function checkCharNum(targetEle, maxChar, name) {
+function checkCharNum(targetEle, maxChar, name, errContainer) {
     if (targetEle.value.length > maxChar) {
-        showErr(`You can only input ${maxChar} charecter in ${name}!!`)
+        showErr(`You can only input ${maxChar} charecter in ${name}!!`, errContainer)
         return false
     }
     return true
 }
 
 // Checking valid input (function)
-function checkInputs() {
-    if (imgInput.value.trim() === "" || !imgUrlRegex.test(imgInput.value)) {
-        showErr("Please fill out the url field properly!!")
+function checkInputs(imgUrlInput, nameInput, addressInput, noteInput, categoryArr, errMsgContainer) {
+    if (imgUrlInput.value.trim() === "" || !imgUrlRegex.test(imgUrlInput.value)) {
+        showErr("Please fill out the url field properly!!", errMsgContainer)
         return false
-    } else if (userNameInput.value.trim() === "" || userAddressInput.value.trim() === "" || noteInput.value.trim() === "") {
-        showErr("Please fill out the input field!!")
+    } else if (nameInput.value.trim() === "" || addressInput.value.trim() === "" || noteInput.value.trim() === "") {
+        showErr("Please fill out the input field!!", errMsgContainer)
         return false
     }
-    let categoryChecked = Array.from(categoryInputs).some(item => item.checked)
+    let categoryChecked = Array.from(categoryArr).some(item => item.checked)
     if (!categoryChecked) {
-        showErr("Please select a category!!")
+        showErr("Please select a category!!", errMsgContainer)
         return false
     }
-    return checkCharNum(userNameInput, userNameInput.dataset.maxchar, "Name Input Field")
-        && checkCharNum(userAddressInput, userAddressInput.dataset.maxchar, "Address Input Field")
-        && checkCharNum(noteInput, noteInput.dataset.maxchar, "Note Input Field")
+    return checkCharNum(nameInput, nameInput.dataset.maxchar, "Name Input Field", errMsgContainer)
+        && checkCharNum(addressInput, addressInput.dataset.maxchar, "Address Input Field", errMsgContainer)
+        && checkCharNum(noteInput, noteInput.dataset.maxchar, "Note Input Field", errMsgContainer)
 }
 
 // Saving Data to local storage
@@ -292,7 +315,7 @@ function resetForm() {
 
 // Adding a new note card
 createNoteBtn.addEventListener("click", evt => {
-    if (checkInputs() === false) return;
+    if (checkInputs(imgInput, userNameInput, userAddressInput, noteInput, categoryInputs, errMsg) === false) return;
     saveData()
     resetForm()
     categoryFilterBtns.forEach(btn => {
@@ -382,6 +405,23 @@ cardDeleteCnfrm.addEventListener("click", evt => {
     }
 })
 
+// Updating counters
+function updateCounterUI(inputElement) {
+    if (!inputElement) return;
+
+    let charCountElm = document.getElementById(inputElement.id.replace("Input", "Counter"));
+    if (!charCountElm) return;
+
+    let currentLen = inputElement.value.length;
+    charCountElm.textContent = currentLen;
+
+    if (currentLen > parseInt(inputElement.dataset.maxchar)) {
+        charCountElm.style.color = "rgb(239 68 68)";
+    } else {
+        charCountElm.style.color = "rgb(107 114 128)";
+    }
+}
+
 // Loading Data to edit inputs
 function loadDataToEditInputs(itemIndex) {
     activeCategory = document.querySelector(".active-filter").dataset.filter;
@@ -395,7 +435,79 @@ function loadDataToEditInputs(itemIndex) {
         addressEditInput.value = contactListItem.address
         noteEditInput.value = contactListItem.note
         document.querySelector(`[data-editcategory="${contactListItem.category}"]`).checked = true
+        updateCounterUI(imgEditInput)
+        updateCounterUI(nameEditInput)
+        updateCounterUI(addressEditInput)
+        updateCounterUI(noteEditInput)
     } else {
+        let contactListItem = contactListFiltered[itemIndex]
+        imgEditInput.value = contactListItem.imgUrl
+        nameEditInput.value = contactListItem.name
+        addressEditInput.value = contactListItem.address
+        noteEditInput.value = contactListItem.note
+        document.querySelector(`[data-editcategory="${contactListItem.category}"]`).checked = true
+        updateCounterUI(imgEditInput)
+        updateCounterUI(nameEditInput)
+        updateCounterUI(addressEditInput)
+        updateCounterUI(noteEditInput)
+    }
+}
+
+// Updating Edited data
+function updateData() {
+    let latestData = JSON.parse(localStorage.getItem("contactList")) || [];
+    activeCategory = document.querySelector(".active-filter").dataset.filter;
+
+    if (activeCategory === "all") {
+        let selectedItem = latestData[currentCardIndex];
+        selectedItem.imgUrl = imgEditInput.value;
+        selectedItem.name = nameEditInput.value;
+        selectedItem.address = addressEditInput.value;
+        selectedItem.note = noteEditInput.value;
+
+        const checkedRadio = document.querySelector(".edit-category-rad:checked");
+
+        
+        if (checkedRadio) {
+            selectedItem.category = checkedRadio.dataset.editcategory;
+            UiCard.classList.remove("urgent-card", "important-card", "norush-card")
+            UiCard.classList.add(`${checkedRadio.dataset.editcategory}-card`)
+        }
+
+        localStorage.setItem("contactList", JSON.stringify(latestData));
+        loadDataUI(currentCardIndex);
+
+    } else {
+        let filteredItem = contactListFiltered[currentCardIndex];
+
+        let mainIndex = latestData.findIndex(item =>
+            item.name === filteredItem.name &&
+            item.imgUrl === filteredItem.imgUrl &&
+            item.note === filteredItem.note
+        );
+
+        if (mainIndex !== -1) {
+            let selectedItem = latestData[mainIndex];
+
+            selectedItem.imgUrl = imgEditInput.value;
+            selectedItem.name = nameEditInput.value;
+            selectedItem.address = addressEditInput.value;
+            selectedItem.note = noteEditInput.value;
+
+            editCategories.forEach(item => {
+                if (item.checked === true) {
+                    selectedItem.category = item.dataset.editcategory;
+                }
+            });
+
+            localStorage.setItem("contactList", JSON.stringify(latestData));
+
+            filterItems(activeCategory);
+        }
+
+        loadDataUI(currentCardIndex);
+
+        checkBtnDisbl();
     }
 }
 
@@ -408,6 +520,12 @@ cardEditBtn.addEventListener("click", evt => {
 
 cardEditModal.addEventListener("click", evt => {
     if (evt.target.id === "closeEditModalBtn") {
+        cardEditModal.classList.remove("flex")
+        cardEditModal.classList.add("hidden")
+    }
+    if (evt.target.id === "saveEditBtn") {
+        if (checkInputs(imgEditInput, nameEditInput, addressEditInput, noteEditInput, editCategories, editErrMsg) === false) return;
+        updateData()
         cardEditModal.classList.remove("flex")
         cardEditModal.classList.add("hidden")
     }
