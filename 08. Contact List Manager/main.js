@@ -26,6 +26,12 @@ const cardEditBtn = document.querySelector("#editCardBtn")
 const cardDeleteCnfrm = document.querySelector("#deleteConfirmModal")
 const cardEditModal = document.querySelector("#editFormModal")
 
+// Card Edit inputs
+const imgEditInput = document.querySelector("#editImgInput")
+const nameEditInput = document.querySelector("#editNameInput")
+const addressEditInput = document.querySelector("#editAddressInput")
+const noteEditInput = document.querySelector("#editNoteInput")
+
 // Card Navigation Buttons
 const nextCardBtn = document.querySelector(".next-card")
 const prevCardBtn = document.querySelector(".prev-card")
@@ -64,6 +70,8 @@ function loadDataUI(itemNumber) {
             UiCard.classList.remove("urgent-card", "important-card", "norush-card")
             UiCard.classList.add(`${contactListItem.category}-card`)
             currentCardIndex = itemNumber
+            cardEditBtn.disabled = false
+            cardDeleteBtn.disabled = false
         }
     } else {
         if (contactListFiltered.length > 0) {
@@ -75,12 +83,16 @@ function loadDataUI(itemNumber) {
             UiCard.classList.remove("urgent-card", "important-card", "norush-card")
             UiCard.classList.add(`${filteredItem.category}-card`)
             currentCardIndex = itemNumber
+            cardEditBtn.disabled = false
+            cardDeleteBtn.disabled = false
         } else {
             userImageUI.src = "https://zafarplastic.com/wp-content/uploads/2024/02/zpceo.jpg"
             userNameUI.textContent = "No Data"
             addressUI.textContent = "No Data"
             noteUI.textContent = "No Data"
             UiCard.classList.remove("urgent-card", "important-card", "norush-card")
+            cardEditBtn.disabled = true
+            cardDeleteBtn.disabled = true
         }
     }
 }
@@ -173,6 +185,14 @@ window.addEventListener('click', (e) => {
     if (e.target === formModal) {
         formModal.classList.add('hidden');
         formModal.classList.remove('flex');
+    }
+    if (e.target === cardEditModal) {
+        cardEditModal.classList.add('hidden');
+        cardEditModal.classList.remove('flex');
+    }
+    if (e.target === cardDeleteCnfrm) {
+        cardDeleteCnfrm.classList.add('hidden');
+        cardDeleteCnfrm.classList.remove('flex');
     }
 });
 
@@ -362,3 +382,33 @@ cardDeleteCnfrm.addEventListener("click", evt => {
     }
 })
 
+// Loading Data to edit inputs
+function loadDataToEditInputs(itemIndex) {
+    activeCategory = document.querySelector(".active-filter").dataset.filter;
+
+    let contactList = JSON.parse(localStorage.getItem("contactList"));
+
+    if (activeCategory === "all") {
+        let contactListItem = contactList[itemIndex]
+        imgEditInput.value = contactListItem.imgUrl
+        nameEditInput.value = contactListItem.name
+        addressEditInput.value = contactListItem.address
+        noteEditInput.value = contactListItem.note
+        document.querySelector(`[data-editcategory="${contactListItem.category}"]`).checked = true
+    } else {
+    }
+}
+
+// Edit Button Functionality
+cardEditBtn.addEventListener("click", evt => {
+    cardEditModal.classList.add("flex") 
+    cardEditModal.classList.remove("hidden") 
+    loadDataToEditInputs(currentCardIndex)
+})
+
+cardEditModal.addEventListener("click", evt => {
+    if (evt.target.id === "closeEditModalBtn") {
+        cardEditModal.classList.remove("flex")
+        cardEditModal.classList.add("hidden")
+    }
+})

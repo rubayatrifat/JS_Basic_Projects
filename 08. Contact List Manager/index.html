@@ -34,8 +34,8 @@
             <div
                 class="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-20">
                 <button id="editCardBtn"
-                    class="bg-[#323236] text-gray-300 hover:text-white p-2 rounded-full border border-gray-700 hover:bg-gray-700 transition cursor-pointer"
-                    title="Edit">
+                    class="disabled:pointer-events-none disabled:opacity-50 bg-[#323236] text-gray-300 hover:text-white p-2 rounded-full border border-gray-700 hover:bg-gray-700 transition cursor-pointer"
+                    title="Edit" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -43,8 +43,8 @@
                     </svg>
                 </button>
                 <button id="deleteCardBtn"
-                    class="bg-[#323236] text-red-400 hover:text-red-500 p-2 rounded-full border border-gray-700 hover:bg-gray-700 transition cursor-pointer"
-                    title="Delete">
+                    class="disabled:pointer-events-none disabled:opacity-50 bg-[#323236] text-red-400 hover:text-red-500 p-2 rounded-full border border-gray-700 hover:bg-gray-700 transition cursor-pointer"
+                    title="Delete" disabled>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -106,22 +106,71 @@
 
         <div id="editFormModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm justify-center items-center z-50">
             <div class="bg-[#222224] border border-gray-800 p-6 rounded-3xl w-[380px] flex flex-col gap-4 shadow-2xl">
+
                 <div class="flex justify-between items-center mb-1">
                     <h3 class="text-white text-xl font-bold">Edit Contact Note</h3>
                     <button id="closeEditModalBtn"
                         class="text-gray-400 hover:text-white transition cursor-pointer">&times;</button>
                 </div>
-                <div class="flex flex-col gap-3">
-                    <input type="text" id="editImgInput" placeholder="Image URL"
-                        class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
-                    <input type="text" id="editNameInput" placeholder="User Name"
-                        class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
-                    <input type="text" id="editAddressInput" placeholder="Address"
-                        class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
-                    <textarea id="editNoteInput" rows="3" placeholder="Appointment Note"
-                        class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 resize-none"></textarea>
+
+                <div id="editErrorMsg"
+                    class="hidden text-center bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium py-2 px-3 rounded-xl tracking-wide">
+                    Please fill out the input field!!
                 </div>
-                <div class="flex gap-3 mt-2">
+
+                <div class="flex flex-col gap-3">
+                    <div>
+                        <input type="text" id="editImgInput" placeholder="Image URL" data-maxchar="250"
+                            class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                    </div>
+
+                    <div>
+                        <input type="text" id="editNameInput" placeholder="User Name" data-maxchar="20"
+                            class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <div class="text-[11px] text-gray-500 text-right mt-1 px-1">
+                            <span id="editNameCounter">0</span>/<span class="max-char-num">20</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <input type="text" id="editAddressInput" placeholder="Address" data-maxchar="30"
+                            class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500">
+                        <div class="text-[11px] text-gray-500 text-right mt-1 px-1">
+                            <span id="editAddressCounter">0</span>/<span class="max-char-num">30</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <textarea id="editNoteInput" rows="3" placeholder="Appointment Note" data-maxchar="100"
+                            class="w-full bg-[#1e1e20] border border-gray-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 resize-none"></textarea>
+                        <div class="text-[11px] text-gray-500 text-right mt-1 px-1">
+                            <span id="editNoteCounter">0</span>/<span class="max-char-num">100</span>
+                        </div>
+                    </div>
+                </div>
+
+                <span class="text-xs font-semibold text-gray-500 block tracking-wide">Select
+                    Category</span>
+                <div class="flex justify-between items-center px-1">
+                    <label
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-400 text-xs font-medium cursor-pointer hover:bg-purple-500/10 transition target-label">
+                        <input type="radio" name="editCategory" class="edit-category-rad accent-[#a855f7]" data-editcategory="urgent">
+                        Urgent
+                    </label>
+                    <label
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-400 text-xs font-medium cursor-pointer hover:bg-orange-500/10 transition target-label">
+                        <input type="radio" name="editCategory" class="edit-category-rad accent-[#f97316]"
+                            data-editcategory="important">
+                        Important
+                    </label>
+                    <label
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-500/30 bg-gray-500/5 text-gray-400 text-xs font-medium cursor-pointer hover:bg-gray-500/10 transition target-label">
+                        <input type="radio" name="editCategory" class="edit-category-rad accent-[#10b981]" data-editcategory="norush">
+                        No Rush
+                    </label>
+                </div>
+
+                <div class="flex gap-3">
                     <button id="saveEditBtn"
                         class="w-full bg-white text-black font-semibold py-2.5 rounded-full hover:bg-gray-200 transition text-sm cursor-pointer shadow-md">Save
                         Changes</button>
@@ -154,7 +203,17 @@
         <div
             class="w-full max-w-[420px] w-[420px] bg-[#1e1e20] border border-gray-800 rounded-3xl p-6 shadow-2xl transform scale-95 transition-transform duration-300">
 
-            <h3 class="text-xl font-bold text-white mb-5">New Call</h3>
+            <div class="flex justify-between items-center mb-5">
+                <h3 class="text-xl font-bold text-white">New Call</h3>
+                <button id="closeModalBtn" type="button"
+                    class="text-gray-400 hover:text-white transition cursor-pointer">
+                    &times;
+                </button>
+            </div>
+
+            <div id="errorMsg"
+                class="hidden text-center bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium py-2 px-3 rounded-xl tracking-wide mb-3">
+            </div>
 
             <form class="flex flex-col gap-4">
                 <div class="flex flex-col gap-1.5">
@@ -165,28 +224,28 @@
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Full Name</label>
-                    <input data-maxchar="35" type="text" id="nameInput" placeholder="Enter full name"
+                    <input data-maxchar="20" type="text" id="nameInput" placeholder="Enter full name"
                         class="user-name w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition">
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
-                        <span id="nameCounter" class="font-medium">0</span> / 35
+                        <span id="nameCounter" class="font-medium">0</span> / 20
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Home Town</label>
-                    <input data-maxchar="25" type="text" id="homeInput" placeholder="Enter home town"
+                    <input data-maxchar="30" type="text" id="homeInput" placeholder="Enter home town"
                         class="user-address w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition">
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
-                        <span id="homeCounter" class="font-medium">0</span> / 25
+                        <span id="homeCounter" class="font-medium">0</span> / 30
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-gray-400 tracking-wider">Appointment Note</label>
-                    <textarea data-maxchar="150" id="noteInput" rows="3" placeholder="Write your appointment note here (Max 150 characters)..."
+                    <textarea data-maxchar="140" id="noteInput" rows="3" placeholder="Write your appointment note here (Max 140 characters)..."
                         class="w-full bg-[#2c2c2e] border border-gray-800 rounded-xl px-4 py-3 text-sm text-gray-200 focus:outline-none focus:border-gray-600 transition resize-none scrollbar-thin scrollbar-thumb-gray-700"></textarea>
                     <div class="text-right text-[11px] text-gray-500 mt-0.5">
-                        <span id="noteCounter" class="font-medium">0</span> / 150
+                        <span id="noteCounter" class="font-medium">0</span> / 140
                     </div>
                 </div>
 
@@ -197,39 +256,31 @@
                         <label
                             class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/5 text-purple-400 text-xs font-medium cursor-pointer hover:bg-purple-500/10 transition target-label">
                             <input type="radio" name="priorityCategory" value="urgent" data-category="urgent"
-                                class="category-rad w-3.5 h-3.5 border-gray-750 text-purple-500 bg-transparent focus:ring-0 focus:ring-offset-0">
+                                class="category-rad accent-[#a855f7] w-3.5 h-3.5 border-gray-750 text-purple-500 bg-transparent focus:ring-0 focus:ring-offset-0">
                             Urgent
                         </label>
 
                         <label
                             class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-orange-500/30 bg-orange-500/5 text-orange-400 text-xs font-medium cursor-pointer hover:bg-orange-500/10 transition target-label">
                             <input type="radio" name="priorityCategory" value="important" data-category="important"
-                                class="category-rad w-3.5 h-3.5 border-gray-750 text-orange-500 bg-transparent focus:ring-0 focus:ring-offset-0">
+                                class="category-rad accent-[#f97316] w-3.5 h-3.5 border-gray-750 text-orange-500 bg-transparent focus:ring-0 focus:ring-offset-0">
                             Important
                         </label>
 
                         <label
                             class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-700 bg-[#2c2c2e] text-gray-400 text-xs font-medium cursor-pointer hover:bg-gray-800 transition target-label">
                             <input type="radio" name="priorityCategory" value="no-rush" data-category="norush"
-                                class="category-rad w-3.5 h-3.5 border-gray-750 text-gray-400 bg-transparent focus:ring-0 focus:ring-offset-0">
+                                class="category-rad accent-[#10b981] w-3.5 h-3.5 border-gray-750 text-gray-400 bg-transparent focus:ring-0 focus:ring-offset-0">
                             No Rush
                         </label>
 
                     </div>
                 </div>
 
-                <p id="errorMsg" class="text-red-500 text-xs font-semibold mt-2 text-center hidden"></p>
-
-                <div class="flex flex-col gap-2.5 mt-4">
-                    <button type="button"
-                        class="create-note w-full bg-white text-black font-bold py-3 rounded-full hover:bg-gray-200 transition duration-200 shadow-md">
-                        Create Note
-                    </button>
-                    <button id="closeModalBtn" type="button"
-                        class="w-full bg-[#ef4444] text-white font-bold py-3 rounded-full hover:bg-red-600 transition duration-200 shadow-md">
-                        Close
-                    </button>
-                </div>
+                <button type="button"
+                    class="create-note w-full bg-white text-black font-bold py-3 rounded-full hover:bg-gray-200 transition duration-200 shadow-md">
+                    Create Note
+                </button>
             </form>
 
         </div>
